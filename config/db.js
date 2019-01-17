@@ -5,5 +5,8 @@ module.exports = {
   options: {
     host: process.env.DB_HOST,
     dialect: 'mysql',
+    define: {
+      timestamps: false
+    },
   }
 };

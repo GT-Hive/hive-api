@@ -1,5 +1,7 @@
 module.exports = function(app, db) {
   app.get('/users', (req, res) => {
-    res.send('Hello');
+    db.User.findAll().then(function(users) {
+      res.json({ users: users });
+    });
   });
 };
