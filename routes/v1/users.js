@@ -12,3 +12,5 @@ exports.getUser = (req, res) => {
     res.json({ user });
   });
 };
+
+exports.userParams = ['id', 'email', 'first_name', 'last_name', 'intro', 'profile_img'];

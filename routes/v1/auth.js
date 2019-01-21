@@ -1,34 +1,35 @@
-const fs = require('fs');
-const privateKey = fs.readFileSync(__dirname + '/../../config/private.key', 'utf8');
-const publicKey = fs.readFileSync(__dirname + '/../../config/public.key', 'utf8');
-const issuer = 'GT-Hive';
-const signOptions = {
-  issuer,
-  expiresIn: '12h',
-  algorithm: "RS256",
-};
+const User = require('../../models').User;
+const passport = require('passport');
 
-exports.login = (req, res) => {
-  const email = req.params.email;
-  const password = req.params.password;
-  // if login successful
-  const date = new Date();
-  const token = jwt.sign(payload, privateKey, signOptions);
+exports.login = (req, res, next) => {
+  const { user: { email, password } } = req.body;
 
-  db.User.findOne({
-    where: { email },
-    attributes: ['id', ['first_name', 'last_name']]
-  }).then(user => {
-    console.log(user);
-    console.log("Token :" + token);
-    res.json({
-      user,
-      token,
-      expires_at: date.setHours(date.getHours() + 12),
-    });
-  });
+  if (!email || (email && !email.includes('@gatech.edu')) || password.length < 6) {
+    return res.status(404).json({ error: 'email or password is not valid' });
+  }
+
+  return passport.authenticate('local', { session: false }, (user, error) => {
+    if (error) return next(error);
+
+    !user ? res.status(404).json({ error }) : res.json(user.toAuthJSON());
+  })(req, res, next);
 };
 
 exports.register = (req, res) => {
+  const { user } = req.body;
 
+  const newUser = User.build(user);
+  newUser.validate()
+    .then(() => {
+      newUser.save()
+        .then(() => res.json(newUser.toAuthJSON()))
+        .catch((err) => {
+          const error = err && err.errors ? err.errors[0].message : 'an error occurred while registering';
+          res.status(422).json({ error });
+        });
+    })
+    .catch((err) => {
+      const error = err && err.errors ? err.errors[0].message : 'an error occurred while registering';
+      res.status(422).json({ error });
+    });
 };
