@@ -1,4 +1,5 @@
-const jwt = require('express-jwt');
+const expJwt = require('express-jwt');
+const jwt = require('jsonwebtoken');
 
 const getTokenFromHeaders = (req) => {
   const { headers: { authorization } } = req;
@@ -10,17 +11,23 @@ const getTokenFromHeaders = (req) => {
 };
 
 const auth = {
-  required: jwt({
+  required: expJwt({
     secret: process.env.JWT_REQUIRED_SECRET,
     userProperty: 'payload',
     getToken: getTokenFromHeaders,
   }),
-  optional: jwt({
+  optional: expJwt({
     secret: process.env.JWT_OPTIONAL_SECRET,
     userProperty: 'payload',
     getToken: getTokenFromHeaders,
     credentialsRequired: false,
   }),
+  generateJWT: (id, email) => {
+    return jwt.sign({
+      id,
+      email,
+    }, process.env.JWT_REQUIRED_SECRET, { expiresIn: '12h' });
+  }
 };
 
 module.exports = auth;

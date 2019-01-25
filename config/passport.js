@@ -1,13 +1,13 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const db = require('../models');
+const User = require('../models').User;
 const errorMsg = 'email or password is not valid';
 
 passport.use(new LocalStrategy({
   usernameField: 'user[email]',
   passwordField: 'user[password]',
 }, (email, password, done) => {
-  db.User.findOne({ where: { email } })
+  User.findOne({ where: { email } })
     .then((user) => {
       if (!user) return done(null, errorMsg);
 

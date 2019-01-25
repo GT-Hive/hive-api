@@ -1,8 +1,9 @@
 /* jshint indent: 2 */
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const jwt = require('../config/jwtAuth');
 const saltRounds = 10;
 const gtEmail = '@gatech.edu';
+const emailSender = require('../lib/emailSender');
 
 module.exports = function(sequelize, DataTypes) {
   const User = sequelize.define('User', {
@@ -43,7 +44,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: '0'
     },
     confirmed_token: {
-      type: DataTypes.INTEGER(1),
+      type: DataTypes.STRING(255),
       allowNull: true
     },
     first_name: {
@@ -90,16 +91,22 @@ module.exports = function(sequelize, DataTypes) {
 
   User.prototype.validatePassword = function(password) {
     return bcrypt.compare(password, this.password);
-  }
+  };
 
   User.prototype.toAuthJSON = function() {
     const today = new Date();
     const exp = new Date(today).setHours(today.getHours() + 12);
-    const token = generateJWT();
+    const token = jwt.generateJWT(this.id, this.email);
     return { token, exp }
-  }
+  };
+  
+  User.prototype.generateConfirmToken = function() {
+    return _generateConfirmToken(this.email);
+  };
 
+  // generate email confirm token & send email before creating a user
   User.beforeCreate(function(user, options) {
+    user.confirmed_token = _generateConfirmToken(user.email);
     return bcrypt.hash(user.password, saltRounds)
       .then(hash => user.password = hash)
       .catch(err => err);
@@ -108,9 +115,9 @@ module.exports = function(sequelize, DataTypes) {
   return User;
 };
 
-generateJWT = function() {
-  return jwt.sign({
-    id: this.id,
-    email: this.email,
-  }, process.env.JWT_REQUIRED_SECRET, { expiresIn: '12h' });
-}
+_generateConfirmToken = (email) => {
+  const buf = require('crypto').randomBytes(64);
+  const token = buf.toString('base64');
+  emailSender.sendConfirmEmail(email, encodeURIComponent(token));
+  return token;
+};

@@ -7,9 +7,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <h3>Hmm.. An error has occurred. Please try again</h3>
-  <% if (locals.err) { %>
-    <h3><%- err %></h3>
+  <% if (locals.isConfirmed) { %>
+    <h3>Your email address has been confirmed!</h3>
+  <% } else { %>
+    <h3>This link is expired. <a href="/api/v1/auth/request-confirm-email/<%- token %>">Click here to request an email again.</a></h3>
   <% } %>
 </body>
 </html>
