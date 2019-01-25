@@ -3,13 +3,13 @@ const auth = require('./auth');
 const users = require('./users');
 
 module.exports = (app, router) => {
-  // auth endpoints
+  // auth
   router.post('/auth/login', jwtAuth.optional, auth.login);
   router.post('/auth/register', jwtAuth.optional, auth.register);
   router.get('/auth/request-confirm-email/:token', jwtAuth.optional, auth.requestConfirmEmail);
   router.get('/auth/confirm-email/:token', jwtAuth.optional, auth.confirmToken);
 
-  // user endpoints
+  // user
   router.get('/users', jwtAuth.required, users.getUsers);
   router.get('/users/:id', jwtAuth.required, users.getUser);
 
