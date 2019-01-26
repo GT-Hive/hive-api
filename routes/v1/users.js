@@ -1,5 +1,5 @@
 const db = require('../../models');
-const User = db.User;
+const User = db['User'];
 const userParams = ['id', 'email', 'first_name', 'last_name', 'intro', 'profile_img'];
 
 exports.getUsers = (req, res) => {
@@ -8,6 +8,7 @@ exports.getUsers = (req, res) => {
 
 exports.getUser = (req, res) => {
   const { id } = req.params;
+
   User.findOne({ where: { id }, attributes: userParams }).then(user => res.json({ user }));
 };
 
@@ -40,6 +41,7 @@ exports.updateUser = (req, res) => {
 
 exports.getUserSkills = (req, res) => {
   const { id } = req.params;
+
   User.findAll({ where: { id }, include: ['Skill'] })
     .then((user) => {
       user[0] ? res.json(user[0]['Skill']) : res.status(404).json({ error: 'User is not found' });
@@ -50,7 +52,8 @@ exports.getUserSkills = (req, res) => {
 exports.addUserSkill = (req, res) => {
   const { skill_id } = req.params;
   const { user } = res.locals;
-  db.Skill.findOne({ where: { id: skill_id } })
+
+  db['Skill'].findOne({ where: { id: skill_id } })
     .then((skill) => {
       user.addSkill(skill)
         .then(() => res.json({ success: 'Successfully added the skill' }))
@@ -61,7 +64,8 @@ exports.addUserSkill = (req, res) => {
 
 exports.removeUserSkill = (req, res) => {
   const { id, skill_id } = req.params;
-  db.User_Skill.destroy({ where: { user_id: id, skill_id } })
+
+  db['User_Skill'].destroy({ where: { user_id: id, skill_id } })
     .then((removedSkill) => {
       removedSkill ?
         res.json({ success: 'Successfully removed the skill from the user' }) :
