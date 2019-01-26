@@ -11,6 +11,7 @@ module.exports = function(sequelize, DataTypes) {
     interest_id: {
       type: DataTypes.INTEGER(10).UNSIGNED,
       allowNull: false,
+      unique: true,
       references: {
         model: 'Interest',
         key: 'id'

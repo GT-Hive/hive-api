@@ -4,6 +4,7 @@ const auth = require('./auth');
 const users = require('./users');
 const interests = require('./interests');
 const skills = require('./skills');
+const communities = require('./communities');
 
 module.exports = (app, router) => {
   // auth
@@ -41,6 +42,13 @@ module.exports = (app, router) => {
   router.post('/skills', jwtAuth.required, skills.createSkill);
   router.delete('/skills/:id', jwtAuth.required, skills.removeSkill);
   router.patch('/skills/:id', jwtAuth.required, skills.updateSkill);
-
+  
+  // communities
+  router.get('/communities', jwtAuth.required, communities.getCommunities);
+  router.get('/communities/:id', jwtAuth.required, communities.getCommunity);
+  router.post('/communities', jwtAuth.required, communities.addCommunityByInterest);
+  router.delete('/communities/:id', jwtAuth.required, communities.removeCommunity);
+  router.delete('/communities/interests/:id', jwtAuth.required, communities.removeCommunityByInterest);
+  
   app.use('/api/v1', router);
 };

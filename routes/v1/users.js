@@ -72,7 +72,7 @@ exports.removeUserSkill = (req, res) => {
         res.json({ success: 'Successfully removed the skill from the user' }) :
         res.status(404).json({ error: 'Skill is not found from the user' });
     })
-    .catch(err => res.json({ error: 'Failed to remove the skill from the user' }));
+    .catch((err) => res.json({ error: 'Failed to remove the skill from the user' }));
 };
 
 exports.getUserInterests = (req, res) => {
@@ -107,5 +107,5 @@ exports.removeUserInterest = (req, res) => {
       if (!removedInterest) return res.status(404).json({ error: 'Interest is not found from the user' });
       res.json({ success: 'Successfully removed the interest from the user' });
     })
-    .catch(err => res.json({ error: 'Failed to remove the interest from the user' }));
+    .catch((err) => res.json({ error: 'Failed to remove the interest from the user' }));
 };

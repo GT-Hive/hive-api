@@ -50,6 +50,11 @@ db['Interest'].belongsToMany(db['User'], {
   foreignKey: 'interest_id'
 });
 
+// define has-one rel between Community & Interest
+db['Community'].belongsTo(db['Interest'], {
+  foreignKey: 'interest_id'
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
