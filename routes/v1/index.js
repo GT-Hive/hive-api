@@ -13,6 +13,8 @@ module.exports = (app, router) => {
   // user
   router.get('/users', jwtAuth.required, users.getUsers);
   router.get('/users/:id', jwtAuth.required, users.getUser);
+  router.delete('/users/:id', jwtAuth.required, users.removeUser);
+  router.patch('/users/:id', jwtAuth.required, users.updateUser);
   
   // interests
   router.get('/interests', jwtAuth.required, interests.getInterests);

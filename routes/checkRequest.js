@@ -11,6 +11,7 @@ module.exports = (app) => {
       User.findOne({ where: { id, email_confirmed: true } })
         .then((user) => {
           if (!user) return res.status(401).json({ error: 'Unauthorized access' });
+          res.locals.userId = id;
           res.locals.user = user;
           next();
         })
