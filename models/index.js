@@ -22,18 +22,32 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+// define many-to-many rel between User & Skill
 db['User'].belongsToMany(db['Skill'], {
   as: 'Skill',
   through: 'User_Skill',
   sourceKey: 'skill_id',
   foreignKey: 'user_id'
 });
-
 db['Skill'].belongsToMany(db['User'], {
   as: 'User',
   through: 'User_Skill',
   sourceKey: 'user_id',
   foreignKey: 'skill_id'
+});
+
+// define many-to-many rel between User & Interest
+db['User'].belongsToMany(db['Interest'], {
+  as: 'Interest',
+  through: 'User_Interest',
+  sourceKey: 'interest_id',
+  foreignKey: 'user_id'
+});
+db['Interest'].belongsToMany(db['User'], {
+  as: 'User',
+  through: 'User_Interest',
+  sourceKey: 'user_id',
+  foreignKey: 'interest_id'
 });
 
 db.sequelize = sequelize;

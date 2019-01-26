@@ -23,6 +23,11 @@ module.exports = (app, router) => {
   router.post('/users/:id/skills/:skill_id', [userHelper.requireCurrentUser, jwtAuth.required], users.addUserSkill);
   router.delete('/users/:id/skills/:skill_id', [userHelper.requireCurrentUser, jwtAuth.required], users.removeUserSkill);
 
+  // user interest
+  router.get('/users/:id/interests', jwtAuth.required, users.getUserInterests);
+  router.post('/users/:id/interests/:interest_id', [userHelper.requireCurrentUser, jwtAuth.required], users.addUserInterest);
+  router.delete('/users/:id/interests/:interest_id', [userHelper.requireCurrentUser, jwtAuth.required], users.removeUserInterest);
+
   // interests
   router.get('/interests', jwtAuth.required, interests.getInterests);
   router.get('/interests/:id', jwtAuth.required, interests.getInterest);
