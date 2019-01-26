@@ -13,7 +13,6 @@ exports.getUser = (req, res) => {
 
 exports.removeUser = (req, res) => {
   const { id } = req.params;
-  if (res.locals.userId !== parseInt(id)) return res.status(404).json({ error: 'Forbidden request' });
 
   User.destroy({ where: { id } })
     .then(() => res.json({ success: 'Successfully removed the user' }))
@@ -30,7 +29,6 @@ exports.updateUser = (req, res) => {
       profile_img
     }
   } = req.body;
-  if (res.locals.userId !== parseInt(id)) return res.status(404).json({ error: 'Forbidden request' });
 
   User.update({ first_name, last_name, intro, profile_img }, { where: { id } })
     .then((result) => {

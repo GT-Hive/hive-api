@@ -15,8 +15,8 @@ module.exports = (app, router) => {
   // user
   router.get('/users', jwtAuth.required, users.getUsers);
   router.get('/users/:id', jwtAuth.required, users.getUser);
-  router.delete('/users/:id', jwtAuth.required, users.removeUser);
-  router.patch('/users/:id', jwtAuth.required, users.updateUser);
+  router.delete('/users/:id', [userHelper.requireCurrentUser, jwtAuth.required], users.removeUser);
+  router.patch('/users/:id', [userHelper.requireCurrentUser, jwtAuth.required], users.updateUser);
 
   // user skills
   router.get('/users/:id/skills', jwtAuth.required, users.getUserSkills);
