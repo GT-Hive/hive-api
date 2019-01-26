@@ -27,6 +27,11 @@ const auth = {
       id,
       email,
     }, process.env.JWT_REQUIRED_SECRET, { expiresIn: '12h' });
+  },
+  getUserIdFromToken: (req) => {
+    return jwt.verify(getTokenFromHeaders(req), process.env.JWT_REQUIRED_SECRET, (err, decoded) => {
+      if (!err) return decoded.id;
+    });
   }
 };
 
