@@ -17,6 +17,8 @@ module.exports = (app) => {
         .catch((_err) => {
           return res.status(401).json({ error: 'Unauthorized access' });
         });
+    } else {
+      next();
     }
   });
 };
