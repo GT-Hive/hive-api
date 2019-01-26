@@ -1,4 +1,5 @@
 const jwtAuth = require('../../config/jwtAuth');
+const userHelper = require('../../lib/userHelper');
 const auth = require('./auth');
 const users = require('./users');
 const interests = require('./interests');
@@ -16,7 +17,12 @@ module.exports = (app, router) => {
   router.get('/users/:id', jwtAuth.required, users.getUser);
   router.delete('/users/:id', jwtAuth.required, users.removeUser);
   router.patch('/users/:id', jwtAuth.required, users.updateUser);
-  
+
+  // user skills
+  router.get('/users/:id/skills', jwtAuth.required, users.getUserSkills);
+  router.post('/users/:id/skills/:skill_id', [userHelper.requireCurrentUser, jwtAuth.required], users.addUserSkill);
+  router.delete('/users/:id/skills/:skill_id', [userHelper.requireCurrentUser, jwtAuth.required], users.removeUserSkill);
+
   // interests
   router.get('/interests', jwtAuth.required, interests.getInterests);
   router.get('/interests/:id', jwtAuth.required, interests.getInterest);

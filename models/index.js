@@ -22,6 +22,20 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+db['User'].belongsToMany(db['Skill'], {
+  as: 'Skill',
+  through: 'User_Skill',
+  sourceKey: 'skill_id',
+  foreignKey: 'user_id'
+});
+
+db['Skill'].belongsToMany(db['User'], {
+  as: 'User',
+  through: 'User_Skill',
+  sourceKey: 'user_id',
+  foreignKey: 'skill_id'
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
