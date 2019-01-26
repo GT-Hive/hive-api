@@ -24,7 +24,10 @@ exports.removeSkill = (req, res) => {
 	const { id } = req.params;
 
 	Skill.destroy({ where: { id } })
-		.then(() => res.json({ success: 'Successfully removed the skill' }))
+		.then((removedSkill) => {
+			if (!removedSkill) return res.status(404).json({ error: 'Skill is not found' });
+			res.json({ success: 'Successfully removed the skill' })
+		})
 		.catch(err => res.json({ error: 'Failed to remove the skill due to an error' }));
 };
 

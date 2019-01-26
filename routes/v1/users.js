@@ -16,7 +16,10 @@ exports.removeUser = (req, res) => {
   const { id } = req.params;
 
   User.destroy({ where: { id } })
-    .then(() => res.json({ success: 'Successfully removed the user' }))
+    .then((removedUser) => {
+      if (!removedUser) return res.status(404).json({ error: 'User is not found' });
+      res.json({ success: 'Successfully removed the user' })
+    })
     .catch(err => res.json({ error: 'Failed to remove the user due to an error' }));
 };
 
@@ -68,9 +71,8 @@ exports.removeUserSkill = (req, res) => {
 
   db['User_Skill'].destroy({ where: { user_id: id, skill_id } })
     .then((removedSkill) => {
-      removedSkill ?
-        res.json({ success: 'Successfully removed the skill from the user' }) :
-        res.status(404).json({ error: 'Skill is not found from the user' });
+      if (!removedSkill) return res.status(404).json({ error: 'Skill is not found from the user' });
+      res.json({ success: 'Successfully removed the skill from the user' });
     })
     .catch((err) => res.json({ error: 'Failed to remove the skill from the user' }));
 };

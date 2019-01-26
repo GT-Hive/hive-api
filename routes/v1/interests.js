@@ -24,7 +24,10 @@ exports.removeInterest = (req, res) => {
   const { id } = req.params;
 
   Interest.destroy({ where: { id } })
-    .then(() => res.json({ success: 'Successfully removed the interest' }))
+    .then((removedInterest) => {
+      if (!removedInterest) return res.status(404).json({ error: 'Interest is not found' });
+      res.json({ success: 'Successfully removed the interest' })
+    })
     .catch(err => res.json({ error: 'Failed to remove the interest due to an error' }));
 };
 
