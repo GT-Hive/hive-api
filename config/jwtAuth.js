@@ -1,8 +1,12 @@
+'use strict';
+
 const expJwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
 
-const getTokenFromHeaders = (req) => {
-  const { headers: { authorization } } = req;
+const getTokenFromHeaders = req => {
+  const {
+    headers: { authorization },
+  } = req;
 
   if (authorization && authorization.split(' ')[0] === 'Bearer') {
     return authorization.split(' ')[1];
@@ -23,16 +27,24 @@ const auth = {
     credentialsRequired: false,
   }),
   generateJWT: (id, email) => {
-    return jwt.sign({
-      id,
-      email,
-    }, process.env.JWT_REQUIRED_SECRET, { expiresIn: '12h' });
+    return jwt.sign(
+      {
+        id,
+        email,
+      },
+      process.env.JWT_REQUIRED_SECRET,
+      { expiresIn: '12h' }
+    );
   },
-  getUserIdFromToken: (req) => {
-    return jwt.verify(getTokenFromHeaders(req), process.env.JWT_REQUIRED_SECRET, (err, decoded) => {
-      if (!err) return decoded.id;
-    });
-  }
+  getUserIdFromToken: req => {
+    return jwt.verify(
+      getTokenFromHeaders(req),
+      process.env.JWT_REQUIRED_SECRET,
+      (err, decoded) => {
+        if (!err) return decoded.id;
+      }
+    );
+  },
 };
 
 module.exports = auth;

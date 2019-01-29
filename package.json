@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "lint": "eslint --fix --ignore-path .gitignore .",
+    "prettier": "prettier --single-quote --trailing-comma es5 --print-width 80 --write \"{,!(node_modules)/**/}*.js\" \n",
+    "pretest": "npm run prettier && npm run lint"
   },
   "repository": {
     "type": "git",
@@ -29,12 +32,15 @@
     "mysql2": "^1.6.4",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "prettier": "^1.16.1",
     "sendgrid": "^5.2.3",
     "sequelize": "^4.42.0",
     "url": "^0.11.0"
   },
   "devDependencies": {
     "dotenv": "^6.2.0",
+    "eslint": "^5.12.1",
+    "eslint-config-strongloop": "^2.1.0",
     "nodemon": "^1.18.9"
   }
 }
