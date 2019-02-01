@@ -1,6 +1,6 @@
 'use strict';
 
-const Interest = require('../../models')['Interest'];
+const Interest = require('../../models').Interest;
 const attributes = ['id', 'name'];
 
 exports.getInterests = (req, res) => {

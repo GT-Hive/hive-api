@@ -1,8 +1,6 @@
 'use strict';
 
 const db = require('../../models');
-const Community = db['Community'];
-const Interest = db['Interest'];
 const attributes = ['id'];
 const interestAttributes = ['id', 'name'];
 const association = {
@@ -10,7 +8,7 @@ const association = {
 };
 
 exports.getCommunities = (req, res) => {
-  Community
+  db.Community
     .findAll({
       attributes,
       include: association.include,
@@ -21,7 +19,7 @@ exports.getCommunities = (req, res) => {
 exports.getCommunity = (req, res) => {
   const { id } = req.params;
 
-  Community
+  db.Community
     .findOne({
       where: { id },
       attributes,
@@ -35,7 +33,7 @@ exports.addCommunityByInterest = (req, res) => {
     community: { interest_id },
   } = req.body;
 
-  Interest
+  db.Interest
     .findOne({ where: { id: interest_id } })
     .then(interest => {
       if (!interest) return res.status(404).json({ error: 'Interest not found for community' });
@@ -51,7 +49,7 @@ exports.addCommunityByInterest = (req, res) => {
 exports.removeCommunity = (req, res) => {
   const { id } = req.params;
 
-  Community
+  db.Community
     .destroy({ where: { id } })
     .then(removedCommunity => {
       removedCommunity
@@ -64,7 +62,7 @@ exports.removeCommunity = (req, res) => {
 exports.removeCommunityByInterest = (req, res) => {
   const { id } = req.params;
 
-  Community
+  db.Community
     .destroy({ where: { interest_id: id } })
     .then(removedCommunity => {
       removedCommunity

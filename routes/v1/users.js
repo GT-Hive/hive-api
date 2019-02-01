@@ -1,11 +1,10 @@
 'use strict';
 
 const db = require('../../models');
-const User = db['User'];
 const userParams = ['id', 'email', 'first_name', 'last_name', 'intro', 'profile_img'];
 
 exports.getUsers = (req, res) => {
-  User
+  db.User
     .findAll({ attributes: userParams })
     .then(users => res.json({ users }));
 };
@@ -13,7 +12,7 @@ exports.getUsers = (req, res) => {
 exports.getUser = (req, res) => {
   const { id } = req.params;
 
-  User
+  db.User
     .findOne({ where: { id }, attributes: userParams })
     .then(user => res.json({ user }));
 };
@@ -21,7 +20,7 @@ exports.getUser = (req, res) => {
 exports.removeUser = (req, res) => {
   const { id } = req.params;
 
-  User
+  db.User
     .destroy({ where: { id } })
     .then(removedUser => {
       removedUser
@@ -38,7 +37,11 @@ exports.updateUser = (req, res) => {
     user: { first_name, last_name, intro, profile_img },
   } = req.body;
 
-  User.update({ first_name, last_name, intro, profile_img }, { where: { id } })
+  db.User
+    .update(
+      { first_name, last_name, intro, profile_img },
+      { where: { id } }
+    )
     .then(result => {
       result[0] > 0
         ? res.json({ success: 'Successfully updated the user' })
@@ -50,7 +53,8 @@ exports.updateUser = (req, res) => {
 exports.getUserSkills = (req, res) => {
   const { id } = req.params;
 
-  User.findAll({ where: { id }, include: ['Skill'] })
+  db.User
+    .findAll({ where: { id }, include: ['Skill'] })
     .then(user => {
       user[0]
         ? res.json(user[0]['Skill'])
@@ -63,7 +67,7 @@ exports.addUserSkill = (req, res) => {
   const { skill_id } = req.params;
   const { user } = res.locals;
 
-  db['Skill']
+  db.Skill
     .findOne({ where: { id: skill_id } })
     .then(skill => {
       if (!skill) return res.status(404).json({ error: 'Skill is not found' });
@@ -79,7 +83,7 @@ exports.addUserSkill = (req, res) => {
 exports.removeUserSkill = (req, res) => {
   const { id, skill_id } = req.params;
 
-  db['User_Skill']
+  db.User_Skill
     .destroy({ where: { user_id: id, skill_id } })
     .then(removedSkill => {
       removedSkill
@@ -92,7 +96,7 @@ exports.removeUserSkill = (req, res) => {
 exports.getUserInterests = (req, res) => {
   const { id } = req.params;
 
-  User
+  db.User
     .findOne({
       where: { id },
       include: [{ association: 'Interest', attributes: ['id', 'name'] }],
@@ -109,7 +113,7 @@ exports.addUserInterest = (req, res) => {
   const { interest_id } = req.params;
   const { user } = res.locals;
 
-  db['Interest']
+  db.Interest
     .findOne({ where: { id: interest_id } })
     .then(interest => {
       if (!interest) return res.status(404).json({ error: 'Interest is not found' });
@@ -125,7 +129,7 @@ exports.addUserInterest = (req, res) => {
 exports.removeUserInterest = (req, res) => {
   const { id, interest_id } = req.params;
 
-  db['User_Interest']
+  db.User_Interest
     .destroy({ where: { user_id: id, interest_id } })
     .then(removedInterest => {
       removedInterest

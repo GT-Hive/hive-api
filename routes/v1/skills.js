@@ -1,6 +1,6 @@
 'use strict';
 
-const Skill = require('../../models')['Skill'];
+const Skill = require('../../models').Skill;
 const attributes = ['id', 'name'];
 
 exports.getSkills = (req, res) => {
