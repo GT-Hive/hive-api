@@ -12,85 +12,52 @@ module.exports = (app, router) => {
   // auth
   router.post('/auth/login', jwtAuth.optional, auth.login);
   router.post('/auth/register', jwtAuth.optional, auth.register);
-  router.get(
-    '/auth/request-confirm-email/:token',
-    jwtAuth.optional,
-    auth.requestConfirmEmail
-  );
+  router.get('/auth/request-confirm-email/:token', jwtAuth.optional, auth.requestConfirmEmail);
   router.get('/auth/confirm-email/:token', jwtAuth.optional, auth.confirmToken);
 
+  /*
+  *************************************************************
+  * Require JWT authentication by default for below endpoints *
+  *************************************************************
+  */
+  router.use(jwtAuth.required);
+
   // user
-  router.get('/users', jwtAuth.required, users.getUsers);
-  router.get('/users/:id', jwtAuth.required, users.getUser);
-  router.delete(
-    '/users/:id',
-    [userHelper.requireCurrentUser, jwtAuth.required],
-    users.removeUser
-  );
-  router.patch(
-    '/users/:id',
-    [userHelper.requireCurrentUser, jwtAuth.required],
-    users.updateUser
-  );
+  router.get('/users', users.getUsers);
+  router.get('/users/:id', users.getUser);
+  router.delete('/users/:id', userHelper.requireCurrentUser, users.removeUser);
+  router.patch('/users/:id', userHelper.requireCurrentUser, users.updateUser);
 
   // user skills
-  router.get('/users/:id/skills', jwtAuth.required, users.getUserSkills);
-  router.post(
-    '/users/:id/skills/:skill_id',
-    [userHelper.requireCurrentUser, jwtAuth.required],
-    users.addUserSkill
-  );
-  router.delete(
-    '/users/:id/skills/:skill_id',
-    [userHelper.requireCurrentUser, jwtAuth.required],
-    users.removeUserSkill
-  );
+  router.get('/users/:id/skills', users.getUserSkills);
+  router.post('/users/:id/skills/:skill_id', userHelper.requireCurrentUser, users.addUserSkill);
+  router.delete('/users/:id/skills/:skill_id', userHelper.requireCurrentUser, users.removeUserSkill);
 
   // user interest
-  router.get('/users/:id/interests', jwtAuth.required, users.getUserInterests);
-  router.post(
-    '/users/:id/interests/:interest_id',
-    [userHelper.requireCurrentUser, jwtAuth.required],
-    users.addUserInterest
-  );
-  router.delete(
-    '/users/:id/interests/:interest_id',
-    [userHelper.requireCurrentUser, jwtAuth.required],
-    users.removeUserInterest
-  );
+  router.get('/users/:id/interests', users.getUserInterests);
+  router.post('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, users.addUserInterest);
+  router.delete('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, users.removeUserInterest);
 
   // interests
-  router.get('/interests', jwtAuth.required, interests.getInterests);
-  router.get('/interests/:id', jwtAuth.required, interests.getInterest);
-  router.post('/interests', jwtAuth.required, interests.createInterest);
-  router.delete('/interests/:id', jwtAuth.required, interests.removeInterest);
-  router.patch('/interests/:id', jwtAuth.required, interests.updateInterest);
+  router.get('/interests', interests.getInterests);
+  router.get('/interests/:id', interests.getInterest);
+  router.post('/interests', interests.createInterest);
+  router.delete('/interests/:id', interests.removeInterest);
+  router.patch('/interests/:id', interests.updateInterest);
 
   // skills
-  router.get('/skills', jwtAuth.required, skills.getSkills);
-  router.get('/skills/:id', jwtAuth.required, skills.getSkill);
-  router.post('/skills', jwtAuth.required, skills.createSkill);
-  router.delete('/skills/:id', jwtAuth.required, skills.removeSkill);
-  router.patch('/skills/:id', jwtAuth.required, skills.updateSkill);
+  router.get('/skills', skills.getSkills);
+  router.get('/skills/:id', skills.getSkill);
+  router.post('/skills', skills.createSkill);
+  router.delete('/skills/:id', skills.removeSkill);
+  router.patch('/skills/:id', skills.updateSkill);
 
   // communities
-  router.get('/communities', jwtAuth.required, communities.getCommunities);
-  router.get('/communities/:id', jwtAuth.required, communities.getCommunity);
-  router.post(
-    '/communities',
-    jwtAuth.required,
-    communities.addCommunityByInterest
-  );
-  router.delete(
-    '/communities/:id',
-    jwtAuth.required,
-    communities.removeCommunity
-  );
-  router.delete(
-    '/communities/interests/:id',
-    jwtAuth.required,
-    communities.removeCommunityByInterest
-  );
+  router.get('/communities', communities.getCommunities);
+  router.get('/communities/:id', communities.getCommunity);
+  router.post('/communities', communities.addCommunityByInterest);
+  router.delete('/communities/:id', communities.removeCommunity);
+  router.delete('/communities/interests/:id', communities.removeCommunityByInterest);
 
   app.use('/api/v1', router);
 };
