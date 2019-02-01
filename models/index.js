@@ -51,6 +51,20 @@ db['Interest'].belongsToMany(db['User'], {
   foreignKey: 'interest_id',
 });
 
+// define many-to-many rel between User & Community
+db['User'].belongsToMany(db['Community'], {
+  as: 'Community',
+  through: 'User_Community',
+  sourceKey: 'community_id',
+  foreignKey: 'user_id',
+});
+db['Community'].belongsToMany(db['User'], {
+  as: 'User',
+  through: 'User_Community',
+  sourceKey: 'user_id',
+  foreignKey: 'community_id',
+});
+
 // define has-one rel between Community & Interest
 db['Community'].belongsTo(db['Interest'], {
   foreignKey: 'interest_id',
