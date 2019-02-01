@@ -2,6 +2,7 @@
 
 const db = require('../../models');
 const userParams = ['id', 'email', 'first_name', 'last_name', 'intro', 'profile_img'];
+const interestParams = ['id', 'name'];
 
 exports.getUsers = (req, res) => {
   db.User
@@ -96,15 +97,19 @@ exports.removeUserSkill = (req, res) => {
 exports.getUserInterests = (req, res) => {
   const { id } = req.params;
 
-  db.User
-    .findOne({
-      where: { id },
-      include: [{ association: 'Interest', attributes: ['id', 'name'] }],
+  db.Interest
+    .findAll({
+      attributes: interestParams,
+      include: [{
+        association: 'User',
+        where: { id },
+        attributes: []
+      }],
     })
-    .then(user => {
-      user
-        ? res.json(user['Interest'])
-        : res.status(404).json({ error: 'User is not found' });
+    .then(interests => {
+      interests
+        ? res.json(interests)
+        : res.status(404).json({ error: 'Interest is not found' });
     })
     .catch(err => res.status(403).json({ error: 'Cannot get user interests' }));
 };
