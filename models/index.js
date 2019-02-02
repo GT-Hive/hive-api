@@ -67,7 +67,20 @@ db['Community'].belongsToMany(db['User'], {
 
 // define has-one rel between Community & Interest
 db['Community'].belongsTo(db['Interest'], {
+  as: 'interest',
   foreignKey: 'interest_id',
+});
+
+// define has-one rel between Event & Location
+db['Event'].belongsTo(db['Location'], {
+  as: 'location',
+  foreignKey: 'location_id',
+});
+
+// define has-one rel between Event & Community
+db['Event'].belongsTo(db['Community'], {
+  as: 'community',
+  foreignKey: 'community_id',
 });
 
 db.sequelize = sequelize;

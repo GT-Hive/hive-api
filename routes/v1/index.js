@@ -10,6 +10,7 @@ const userSkills = require('./users/skills');
 const interests = require('./interests');
 const skills = require('./skills');
 const communities = require('./communities');
+const events = require('./events/index');
 
 module.exports = (app, router) => {
   // auth
@@ -66,6 +67,13 @@ module.exports = (app, router) => {
   router.post('/communities', communities.addCommunityByInterest);
   router.delete('/communities/:id', communities.removeCommunity);
   router.delete('/communities/interests/:id', communities.removeCommunityByInterest);
+
+  // events
+  router.get('/events', events.getEvents);
+  router.get('/events/:id', events.getEvent);
+  router.post('/events', events.createEvent);
+  router.delete('/events/:id', events.removeEvent);
+  router.patch('/events/:id', events.updateEvent);
 
   app.use('/api/v1', router);
 };
