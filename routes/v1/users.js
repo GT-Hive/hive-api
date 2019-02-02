@@ -3,6 +3,7 @@
 const db = require('../../models');
 const userParams = ['id', 'email', 'first_name', 'last_name', 'intro', 'profile_img'];
 const interestParams = ['id', 'name'];
+const skillParams = ['id', 'name'];
 
 exports.getUsers = (req, res) => {
   db.User
@@ -54,12 +55,19 @@ exports.updateUser = (req, res) => {
 exports.getUserSkills = (req, res) => {
   const { id } = req.params;
 
-  db.User
-    .findAll({ where: { id }, include: ['Skill'] })
-    .then(user => {
-      user[0]
-        ? res.json(user[0]['Skill'])
-        : res.status(404).json({ error: 'User is not found' });
+  db.Skill
+    .findAll({
+      attributes: skillParams,
+      include: [{
+        association: 'User',
+        where: { id },
+        attributes: []
+      }],
+    })
+    .then(skills => {
+      skills
+        ? res.json({ skills })
+        : res.status(404).json({ error: 'Skill is not found' });
     })
     .catch(err => res.status(403).json({ error: 'Cannot get user skills' }));
 };
