@@ -15,7 +15,7 @@ exports.getEvents = (req, res) => {
 			LEFT OUTER JOIN Location ON E.location_id = Location.id;
     `,
 			{ type: db.sequelize.QueryTypes.SELECT }
-    )
+		)
 		.then(events => {
 			events
 				? res.json({ events })

@@ -67,6 +67,7 @@ module.exports = (app, router) => {
   router.post('/communities', communities.addCommunityByInterest);
   router.delete('/communities/:id', communities.removeCommunity);
   router.delete('/communities/interests/:id', communities.removeCommunityByInterest);
+  router.get('/communities/:id/events', communities.getCommunityEvents);
 
   // events
   router.get('/events', events.getEvents);

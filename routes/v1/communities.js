@@ -31,7 +31,10 @@ exports.getCommunity = (req, res) => {
       ON C.interest_id = Interest.id
       WHERE C.id = $id;
     `,
-      { bind: { id }, type: db.sequelize.QueryTypes.SELECT }
+      {
+        bind: { id },
+        type: db.sequelize.QueryTypes.SELECT,
+      },
     )
     .then(community => {
       community[0]
@@ -83,4 +86,32 @@ exports.removeCommunityByInterest = (req, res) => {
         : res.status(404).json({ error: 'Community is not found' });
     })
     .catch(err => res.json({ error: 'Failed to remove the community due to an error' }));
+};
+
+exports.getCommunityEvents = (req, res) => {
+  const { id } = req.params;
+
+  db.sequelize
+    .query(`
+      SELECT
+      	E.id, E.name, E.description, E.event_date, E.start_time, E.end_time, E.cover_img, E.created_at, E.updated_at,
+      	Interest.name AS community_name,
+      	Location.name AS location_name, Location.room_number AS room_number
+			FROM Event AS E
+			LEFT OUTER JOIN (Community AS C INNER JOIN Interest ON C.interest_id = Interest.id)
+			ON E.community_id = C.id
+			LEFT OUTER JOIN Location ON E.location_id = Location.id
+      WHERE C.id = $id;
+    `,
+      {
+        bind: { id },
+        type: db.sequelize.QueryTypes.SELECT,
+      },
+    )
+    .then(events => {
+      events
+        ? res.json({ events })
+        : res.status(404).json({ error: 'Events are not found' });
+    })
+    .catch(err => res.status(403).json({ error: 'Cannot get events' }))
 };
