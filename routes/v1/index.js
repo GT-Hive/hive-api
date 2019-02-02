@@ -38,6 +38,11 @@ module.exports = (app, router) => {
   router.post('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, users.addUserInterest);
   router.delete('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, users.removeUserInterest);
 
+  // user communities
+  router.get('/users/:id/communities', users.getUserCommunities);
+  router.post('/users/:id/communities/:community_id', userHelper.requireCurrentUser, users.addUserCommunity);
+  router.delete('/users/:id/communities/:community_id', userHelper.requireCurrentUser, users.removeUserCommunity);
+
   // interests
   router.get('/interests', interests.getInterests);
   router.get('/interests/:id', interests.getInterest);
