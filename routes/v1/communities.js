@@ -1,31 +1,44 @@
 'use strict';
 
 const db = require('../../models');
-const attributes = ['id'];
-const interestAttributes = ['id', 'name'];
-const association = {
-  include: [{ association: 'Interest', attributes: interestAttributes }],
-};
 
 exports.getCommunities = (req, res) => {
-  db.Community
-    .findAll({
-      attributes,
-      include: association.include,
+  db.sequelize
+    .query(`
+      SELECT C.id, name
+      FROM Interest
+      JOIN (SELECT id, interest_id FROM Community) C
+      ON C.interest_id = Interest.id;
+    `,
+      { type: db.sequelize.QueryTypes.SELECT }
+    )
+    .then(communities => {
+      communities
+        ? res.json({ communities })
+        : res.status(404).json({ error: 'Communities are not found' });
     })
-    .then(communities => res.json({ communities }));
+    .catch(err => res.status(403).json({ error: 'Cannot get communities' }));
 };
 
 exports.getCommunity = (req, res) => {
   const { id } = req.params;
 
-  db.Community
-    .findOne({
-      where: { id },
-      attributes,
-      include: association.include,
+  db.sequelize
+    .query(`
+      SELECT C.id, name
+      FROM Interest
+      JOIN (SELECT id, interest_id FROM Community) C
+      ON C.interest_id = Interest.id
+      WHERE C.id = $id;
+    `,
+      { bind: { id }, type: db.sequelize.QueryTypes.SELECT }
+    )
+    .then(community => {
+      community[0]
+        ? res.json({ community: community[0] })
+        : res.status(404).json({ error: 'Community is not found' });
     })
-    .then(community => res.json({ community }));
+    .catch(err => res.status(403).json({ error: 'Cannot get the community' }));
 };
 
 exports.addCommunityByInterest = (req, res) => {

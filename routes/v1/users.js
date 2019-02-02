@@ -159,7 +159,7 @@ exports.getUserCommunities = (req, res) => {
     .query(`
       SELECT name
       FROM Interest
-      WHERE id = (
+      WHERE id IN (
         SELECT interest_id 
         FROM Community
         JOIN User_Community AS UC
