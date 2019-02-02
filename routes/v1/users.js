@@ -108,7 +108,7 @@ exports.getUserInterests = (req, res) => {
     })
     .then(interests => {
       interests
-        ? res.json(interests)
+        ? res.json({ interests })
         : res.status(404).json({ error: 'Interest is not found' });
     })
     .catch(err => res.status(403).json({ error: 'Cannot get user interests' }));
