@@ -47,7 +47,12 @@ exports.confirmToken = (req, res) => {
   const { token } = req.params;
 
   User
-    .findOne({ where: { confirmed_token: token } })
+    .findOne({
+      where: {
+        confirmed_token: token,
+        email_confirmed: false,
+      }
+    })
     .then(user => {
       const tokenDate = new Date(user.updated_at);
       const exp = tokenDate.setHours(tokenDate.getHours() + 12);
@@ -62,7 +67,7 @@ exports.confirmToken = (req, res) => {
       }
     })
     .catch(err => {
-      res.render('error');
+      res.render('error', { err: 'Token is invalid or email already has been confirmed' });
     });
 };
 
@@ -76,7 +81,12 @@ exports.requestConfirmEmail = (req, res) => {
     // allow one request email up to 3 minutes to avoid brute-force attack
     req.session.holdUntil = today.setSeconds(today.getSeconds() + 180);
     User
-      .findOne({ where: { confirmed_token: token, email_confirmed: false } })
+      .findOne({
+        where: {
+          confirmed_token: token,
+          email_confirmed: false,
+        }
+      })
       .then(user => {
         user.confirmed_token = user.generateConfirmToken();
         user.save();
