@@ -4,6 +4,9 @@ const jwtAuth = require('../../config/jwtAuth');
 const userHelper = require('../../lib/userHelper');
 const auth = require('./auth');
 const users = require('./users');
+const userCommunities = require('./users/communities');
+const userInterests = require('./users/interests');
+const userSkills = require('./users/skills');
 const interests = require('./interests');
 const skills = require('./skills');
 const communities = require('./communities');
@@ -29,19 +32,19 @@ module.exports = (app, router) => {
   router.patch('/users/:id', userHelper.requireCurrentUser, users.updateUser);
 
   // user skills
-  router.get('/users/:id/skills', users.getUserSkills);
-  router.post('/users/:id/skills/:skill_id', userHelper.requireCurrentUser, users.addUserSkill);
-  router.delete('/users/:id/skills/:skill_id', userHelper.requireCurrentUser, users.removeUserSkill);
+  router.get('/users/:id/skills', userSkills.getUserSkills);
+  router.post('/users/:id/skills/:skill_id', userHelper.requireCurrentUser, userSkills.addUserSkill);
+  router.delete('/users/:id/skills/:skill_id', userHelper.requireCurrentUser, userSkills.removeUserSkill);
 
   // user interest
-  router.get('/users/:id/interests', users.getUserInterests);
-  router.post('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, users.addUserInterest);
-  router.delete('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, users.removeUserInterest);
+  router.get('/users/:id/interests', userInterests.getUserInterests);
+  router.post('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, userInterests.addUserInterest);
+  router.delete('/users/:id/interests/:interest_id', userHelper.requireCurrentUser, userInterests.removeUserInterest);
 
   // user communities
-  router.get('/users/:id/communities', users.getUserCommunities);
-  router.post('/users/:id/communities/:community_id', userHelper.requireCurrentUser, users.addUserCommunity);
-  router.delete('/users/:id/communities/:community_id', userHelper.requireCurrentUser, users.removeUserCommunity);
+  router.get('/users/:id/communities', userCommunities.getUserCommunities);
+  router.post('/users/:id/communities/:community_id', userHelper.requireCurrentUser, userCommunities.addUserCommunity);
+  router.delete('/users/:id/communities/:community_id', userHelper.requireCurrentUser, userCommunities.removeUserCommunity);
 
   // interests
   router.get('/interests', interests.getInterests);
