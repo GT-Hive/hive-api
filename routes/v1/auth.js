@@ -51,7 +51,7 @@ exports.confirmToken = (req, res) => {
       where: {
         confirmed_token: token,
         email_confirmed: false,
-      }
+      },
     })
     .then(user => {
       const tokenDate = new Date(user.updated_at);
@@ -85,7 +85,7 @@ exports.requestConfirmEmail = (req, res) => {
         where: {
           confirmed_token: token,
           email_confirmed: false,
-        }
+        },
       })
       .then(user => {
         user.confirmed_token = user.generateConfirmToken();
@@ -99,7 +99,7 @@ exports.requestConfirmEmail = (req, res) => {
       });
   } else {
     res.render('error', {
-      err: 'It looks like you already verified your email. If not, please wait for 3 minutes to request again.'
+      err: 'It looks like you already verified your email. If not, please wait for 3 minutes to request again.',
     });
   }
 };

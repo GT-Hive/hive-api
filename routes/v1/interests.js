@@ -49,8 +49,8 @@ exports.updateInterest = (req, res) => {
       result[0] > 0
         ? res.json({ success: 'Successfully updated the interest' })
         : res.status(403).json({
-            error: 'Already updated or failed to update due to invalid interest',
-          });
+          error: 'Already updated or failed to update due to invalid interest',
+        });
     })
     .catch(err => res.status(403).json({ error: 'Failed to update the interest' }));
 };

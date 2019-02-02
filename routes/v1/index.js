@@ -7,10 +7,11 @@ const users = require('./users');
 const userCommunities = require('./users/communities');
 const userInterests = require('./users/interests');
 const userSkills = require('./users/skills');
+const userEvents = require('./users/events');
 const interests = require('./interests');
 const skills = require('./skills');
 const communities = require('./communities');
-const events = require('./events/index');
+const events = require('./events');
 
 module.exports = (app, router) => {
   // auth
@@ -47,6 +48,21 @@ module.exports = (app, router) => {
   router.post('/users/:id/communities/:community_id', userHelper.requireCurrentUser, userCommunities.addUserCommunity);
   router.delete('/users/:id/communities/:community_id', userHelper.requireCurrentUser, userCommunities.removeUserCommunity);
 
+  // user events
+  router.get('/users/:id/guest-events', userEvents.getUserGuestEvents);
+  router.get('/users/:id/host-events', userEvents.getUserHostEvents);
+  router.get('/users/:id/events', userEvents.getUserEvents);
+  router.post('/users/:id/host-events', userHelper.requireCurrentUser, userEvents.createHostEvent);
+  router.post('/users/:id/guest-events/:event_id', userHelper.requireCurrentUser, userEvents.addGuestEvent);
+  router.delete('/users/:id/host-events/:event_id', userHelper.requireCurrentUser, userEvents.removeHostEvent);
+  router.delete('/users/:id/guest-events/:event_id', userHelper.requireCurrentUser, userEvents.removeGuestEvent);
+  router.patch('/users/:id/host-events/:event_id', userHelper.requireCurrentUser, userEvents.updateHostEvent);
+
+  // events
+  router.get('/events', events.getEvents);
+  router.get('/events/:id', events.getEvent);
+  router.get('/events/:id/guests', events.getEventGuests);
+
   // interests
   router.get('/interests', interests.getInterests);
   router.get('/interests/:id', interests.getInterest);
@@ -68,13 +84,6 @@ module.exports = (app, router) => {
   router.delete('/communities/:id', communities.removeCommunity);
   router.delete('/communities/interests/:id', communities.removeCommunityByInterest);
   router.get('/communities/:id/events', communities.getCommunityEvents);
-
-  // events
-  router.get('/events', events.getEvents);
-  router.get('/events/:id', events.getEvent);
-  router.post('/events', events.createEvent);
-  router.delete('/events/:id', events.removeEvent);
-  router.patch('/events/:id', events.updateEvent);
 
   app.use('/api/v1', router);
 };

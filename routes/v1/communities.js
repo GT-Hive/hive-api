@@ -10,7 +10,7 @@ exports.getCommunities = (req, res) => {
       JOIN (SELECT id, interest_id FROM Community) C
       ON C.interest_id = Interest.id;
     `,
-      { type: db.sequelize.QueryTypes.SELECT }
+    { type: db.sequelize.QueryTypes.SELECT }
     )
     .then(communities => {
       communities
@@ -31,10 +31,10 @@ exports.getCommunity = (req, res) => {
       ON C.interest_id = Interest.id
       WHERE C.id = $id;
     `,
-      {
-        bind: { id },
-        type: db.sequelize.QueryTypes.SELECT,
-      },
+    {
+      bind: { id },
+      type: db.sequelize.QueryTypes.SELECT,
+    },
     )
     .then(community => {
       community[0]
@@ -54,7 +54,7 @@ exports.addCommunityByInterest = (req, res) => {
     .then(interest => {
       if (!interest) return res.status(404).json({ error: 'Interest not found for community' });
 
-      Community
+      db.Community
         .create({ interest_id })
         .then(() => res.json({ success: 'Successfully added the community' }))
         .catch(err => res.json({ error: 'The community already exists' }));
@@ -103,15 +103,15 @@ exports.getCommunityEvents = (req, res) => {
 			LEFT OUTER JOIN Location ON E.location_id = Location.id
       WHERE C.id = $id;
     `,
-      {
-        bind: { id },
-        type: db.sequelize.QueryTypes.SELECT,
-      },
+    {
+      bind: { id },
+      type: db.sequelize.QueryTypes.SELECT,
+    },
     )
     .then(events => {
       events
         ? res.json({ events })
         : res.status(404).json({ error: 'Events are not found' });
     })
-    .catch(err => res.status(403).json({ error: 'Cannot get events' }))
+    .catch(err => res.status(403).json({ error: 'Cannot get events' }));
 };

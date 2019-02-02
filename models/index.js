@@ -83,6 +83,23 @@ db['Event'].belongsTo(db['Community'], {
   foreignKey: 'community_id',
 });
 
+// define many-to-many rel between User & Event
+db['User'].belongsToMany(db['Event'], {
+  as: 'Event',
+  through: 'User_Event',
+  sourceKey: 'event_id',
+  foreignKey: 'user_id',
+});
+db['Event'].belongsToMany(db['User'], {
+  as: {
+    singular: 'user',
+    plural: 'users',
+  },
+  through: 'User_Event',
+  sourceKey: 'user_id',
+  foreignKey: 'event_id',
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
