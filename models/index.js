@@ -53,13 +53,13 @@ db['Interest'].belongsToMany(db['User'], {
 
 // define many-to-many rel between User & Community
 db['User'].belongsToMany(db['Community'], {
-  as: 'Community',
+  as: 'communities',
   through: 'User_Community',
   sourceKey: 'community_id',
   foreignKey: 'user_id',
 });
 db['Community'].belongsToMany(db['User'], {
-  as: 'User',
+  as: 'users',
   through: 'User_Community',
   sourceKey: 'user_id',
   foreignKey: 'community_id',
