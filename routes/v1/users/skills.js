@@ -10,7 +10,7 @@ exports.getUserSkills = (req, res) => {
     .findAll({
       attributes: skillParams,
       include: [{
-        association: 'User',
+        association: 'users',
         where: { id },
         attributes: [],
       }],
@@ -28,7 +28,11 @@ exports.addUserSkill = (req, res) => {
   const { user } = res.locals;
 
   db.Skill
-    .findOne({ where: { id: skill_id } })
+    .findOne({
+      where: {
+        id: skill_id,
+      },
+    })
     .then(skill => {
       if (!skill) return res.status(404).json({ error: 'Skill is not found' });
 
@@ -44,7 +48,12 @@ exports.removeUserSkill = (req, res) => {
   const { id, skill_id } = req.params;
 
   db.User_Skill
-    .destroy({ where: { user_id: id, skill_id } })
+    .destroy({
+      where: {
+        skill_id,
+        user_id: id,
+      },
+    })
     .then(removedSkill => {
       removedSkill
         ? res.json({ success: 'Successfully removed the skill from the user' })

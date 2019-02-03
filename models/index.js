@@ -25,13 +25,13 @@ Object.keys(db).forEach(modelName => {
 
 // define many-to-many rel between User & Skill
 db['User'].belongsToMany(db['Skill'], {
-  as: 'Skill',
+  as: 'skills',
   through: 'User_Skill',
   sourceKey: 'skill_id',
   foreignKey: 'user_id',
 });
 db['Skill'].belongsToMany(db['User'], {
-  as: 'User',
+  as: 'users',
   through: 'User_Skill',
   sourceKey: 'user_id',
   foreignKey: 'skill_id',
