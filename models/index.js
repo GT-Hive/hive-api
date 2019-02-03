@@ -39,13 +39,13 @@ db['Skill'].belongsToMany(db['User'], {
 
 // define many-to-many rel between User & Interest
 db['User'].belongsToMany(db['Interest'], {
-  as: 'Interest',
+  as: 'interests',
   through: 'User_Interest',
   sourceKey: 'interest_id',
   foreignKey: 'user_id',
 });
 db['Interest'].belongsToMany(db['User'], {
-  as: 'User',
+  as: 'users',
   through: 'User_Interest',
   sourceKey: 'user_id',
   foreignKey: 'interest_id',

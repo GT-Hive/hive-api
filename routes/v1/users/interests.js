@@ -10,7 +10,7 @@ exports.getUserInterests = (req, res) => {
     .findAll({
       attributes: interestParams,
       include: [{
-        association: 'User',
+        association: 'users',
         where: { id },
         attributes: [],
       }],
@@ -28,7 +28,11 @@ exports.addUserInterest = (req, res) => {
   const { user } = res.locals;
 
   db.Interest
-    .findOne({ where: { id: interest_id } })
+    .findOne({
+      where: {
+        id: interest_id,
+      },
+    })
     .then(interest => {
       if (!interest) return res.status(404).json({ error: 'Interest is not found' });
 
