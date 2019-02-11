@@ -49,12 +49,12 @@ module.exports = (app, router) => {
   router.delete('/users/:id/communities/:community_id', userHelper.requireCurrentUser, userCommunities.removeUserCommunity);
 
   // user events
+  router.get('/users/:id/events', userEvents.getUserEvents);
   router.get('/users/:id/guest-events', userEvents.getUserGuestEvents);
   router.get('/users/:id/host-events', userEvents.getUserHostEvents);
-  router.get('/users/:id/events', userEvents.getUserEvents);
   router.post('/users/:id/host-events', userHelper.requireCurrentUser, userEvents.createHostEvent);
-  router.post('/users/:id/guest-events/:event_id', userHelper.requireCurrentUser, userEvents.addGuestEvent);
   router.delete('/users/:id/host-events/:event_id', userHelper.requireCurrentUser, userEvents.removeHostEvent);
+  router.post('/users/:id/guest-events/:event_id', userHelper.requireCurrentUser, userEvents.addGuestEvent);
   router.delete('/users/:id/guest-events/:event_id', userHelper.requireCurrentUser, userEvents.removeGuestEvent);
   router.patch('/users/:id/host-events/:event_id', userHelper.requireCurrentUser, userEvents.updateHostEvent);
 
@@ -62,6 +62,7 @@ module.exports = (app, router) => {
   router.get('/events', events.getEvents);
   router.get('/events/:id', events.getEvent);
   router.get('/events/:id/guests', events.getEventGuests);
+  router.get('/events/:id/hosts', events.getEventHosts);
 
   // interests
   router.get('/interests', interests.getInterests);

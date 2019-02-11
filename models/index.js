@@ -83,20 +83,27 @@ db['Event'].belongsTo(db['Community'], {
   foreignKey: 'community_id',
 });
 
-// define many-to-many rel between User & Event
+// define many-to-many rel between Host & Event
+db['Event'].belongsToMany(db['User'], {
+  as: 'hosts',
+  through: 'Host',
+  foreignKey: 'event_id',
+});
 db['User'].belongsToMany(db['Event'], {
-  as: 'Event',
-  through: 'User_Event',
-  sourceKey: 'event_id',
+  as: 'host_events',
+  through: 'Host',
+  foreignKey: 'user_id',
+});
+
+// define many-to-many rel between Guest & Event
+db['User'].belongsToMany(db['Event'], {
+  as: 'guest_events',
+  through: 'Guest',
   foreignKey: 'user_id',
 });
 db['Event'].belongsToMany(db['User'], {
-  as: {
-    singular: 'user',
-    plural: 'users',
-  },
-  through: 'User_Event',
-  sourceKey: 'user_id',
+  as: 'guests',
+  through: 'Guest',
   foreignKey: 'event_id',
 });
 
