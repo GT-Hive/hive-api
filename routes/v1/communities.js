@@ -6,17 +6,8 @@ const communityParams = [
   'created_at',
   'updated_at'
 ];
-const eventParams = [
-  'id',
-  'name',
-  'description',
-  'event_date',
-  'start_time',
-  'end_time',
-  'cover_img',
-  'created_at',
-  'updated_at',
-];
+const eventParams = require('../../lib/eventHelper').attributes;
+const userParams = require('../../lib/userHelper').attributes;
 
 exports.getCommunities = (req, res) => {
   db.Community
@@ -53,6 +44,32 @@ exports.getCommunity = (req, res) => {
         : res.status(404).json({ error: 'Community is not found' });
     })
     .catch(err => res.status(403).json({ error: 'Cannot get community' }));
+};
+
+exports.getCommunityUsers = (req, res) => {
+  const { id } = req.params;
+
+  db.User
+    .findAll({
+      attributes: userParams,
+      include: {
+        association: 'communities',
+        attributes: communityParams,
+        where: { id },
+        include: {
+          association: 'interest',
+          attributes: ['name'],
+        },
+        through: {
+          attributes: [],
+        },
+      },
+    })
+    .then(users => {
+      users
+        ? res.json({ users })
+        : res.status(404).json({ error: 'Community users are not found' });
+    })
 };
 
 exports.addCommunityByInterest = (req, res) => {
@@ -123,7 +140,7 @@ exports.getCommunityEvents = (req, res) => {
           include: {
             association: 'interest',
             attributes: ['name'],
-          }
+          },
         },
         {
           association: 'location',

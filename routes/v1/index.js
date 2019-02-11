@@ -67,6 +67,7 @@ module.exports = (app, router) => {
   // interests
   router.get('/interests', interests.getInterests);
   router.get('/interests/:id', interests.getInterest);
+  router.get('/interests/:id/users', interests.getInterestUsers);
   router.post('/interests', interests.createInterest);
   router.delete('/interests/:id', interests.removeInterest);
   router.patch('/interests/:id', interests.updateInterest);
@@ -77,10 +78,12 @@ module.exports = (app, router) => {
   router.post('/skills', skills.createSkill);
   router.delete('/skills/:id', skills.removeSkill);
   router.patch('/skills/:id', skills.updateSkill);
+  router.get('/skills/:id/users', skills.getSkillUsers);
 
   // communities
   router.get('/communities', communities.getCommunities);
   router.get('/communities/:id', communities.getCommunity);
+  router.get('/communities/:id/users', communities.getCommunityUsers);
   router.post('/communities', communities.addCommunityByInterest);
   router.delete('/communities/:id', communities.removeCommunity);
   router.delete('/communities/interests/:id', communities.removeCommunityByInterest);

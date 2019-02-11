@@ -1,10 +1,11 @@
 'use strict';
 
-const Interest = require('../../models').Interest;
+const db = require('../../models');
 const interestParams = ['id', 'name'];
+const userParams = require('../../lib/userHelper').attributes;
 
 exports.getInterests = (req, res) => {
-  Interest
+  db.Interest
     .findAll({
       attributes: interestParams,
     })
@@ -14,7 +15,7 @@ exports.getInterests = (req, res) => {
 exports.getInterest = (req, res) => {
   const { id } = req.params;
 
-  Interest
+  db.Interest
     .findOne({
       where: { id },
       attributes: interestParams,
@@ -22,10 +23,29 @@ exports.getInterest = (req, res) => {
     .then(interest => res.json({ interest }));
 };
 
+exports.getInterestUsers = (req, res) => {
+  const { id } = req.params;
+
+  db.User
+    .findAll({
+      attributes: userParams,
+      include: {
+        association: 'interests',
+        attributes: interestParams,
+        where: { id },
+      },
+    })
+    .then(users => {
+      users.length > 0
+        ? res.json({ users })
+        : res.status(404).json({ error: 'Users of the interest are not found' });
+    });
+};
+
 exports.createInterest = (req, res) => {
   const { interest } = req.body;
 
-  Interest
+  db.Interest
     .create({
       name: interest.name,
     })
@@ -36,7 +56,7 @@ exports.createInterest = (req, res) => {
 exports.removeInterest = (req, res) => {
   const { id } = req.params;
 
-  Interest
+  db.Interest
     .destroy({
       where: { id },
     })
@@ -52,7 +72,7 @@ exports.updateInterest = (req, res) => {
   const { id } = req.params;
   const { interest } = req.body;
 
-  Interest
+  db.Interest
     .update(
       {
         name: interest.name,

@@ -2,6 +2,7 @@
 
 const Skill = require('../../models').Skill;
 const skillParams = ['id', 'name'];
+const userParams = require('../../lib/userHelper').attributes;
 
 exports.getSkills = (req, res) => {
   Skill
@@ -67,4 +68,26 @@ exports.updateSkill = (req, res) => {
         : res.status(403).json({ error: 'Already updated or failed to update due to invalid skill' });
     })
     .catch(err => res.status(403).json({ error: 'Failed to update the skill' }));
+};
+
+exports.getSkillUsers = (req, res) => {
+  const { id } = req.params;
+
+  Skill
+    .findOne({
+      where: { id },
+      attributes: skillParams,
+      include: {
+        association: 'users',
+        attributes: userParams,
+        through: {
+          attributes: [],
+        },
+      },
+    })
+    .then(skill => {
+      skill
+        ? res.json({ skill })
+        : res.status(404).json({ error: 'Skill is not found' });
+    });
 };
