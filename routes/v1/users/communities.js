@@ -4,7 +4,7 @@ const db = require('../../../models');
 const communitiesParams = [
   'id',
   'created_at',
-  'updated_at'
+  'updated_at',
 ];
 
 exports.getUserCommunities = (req, res) => {
@@ -32,7 +32,8 @@ exports.getUserCommunities = (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      res.status(403).json({ error: 'Cannot get communities' })});
+      res.status(403).json({ error: 'Cannot get communities' });
+    });
 };
 
 exports.addUserCommunity = (req, res) => {

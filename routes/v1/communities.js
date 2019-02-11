@@ -4,7 +4,7 @@ const db = require('../../models');
 const communityParams = [
   'id',
   'created_at',
-  'updated_at'
+  'updated_at',
 ];
 const eventParams = require('../../lib/eventHelper').attributes;
 const userParams = require('../../lib/userHelper').attributes;
@@ -69,7 +69,7 @@ exports.getCommunityUsers = (req, res) => {
       users
         ? res.json({ users })
         : res.status(404).json({ error: 'Community users are not found' });
-    })
+    });
 };
 
 exports.addCommunityByInterest = (req, res) => {
@@ -80,7 +80,7 @@ exports.addCommunityByInterest = (req, res) => {
   db.Interest
     .findOne({
       where: {
-        id: interest_id
+        id: interest_id,
       },
     })
     .then(interest => {

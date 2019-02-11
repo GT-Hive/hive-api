@@ -86,7 +86,7 @@ exports.requestConfirmEmail = (req, res) => {
         user.confirmed_token = user.generateConfirmToken();
         user.save();
         is_api_request
-          ?  res.json({ success: 'The confirmation email has been sent! Please check your email inbox.' })
+          ? res.json({ success: 'The confirmation email has been sent! Please check your email inbox.' })
           : res.render('resendConfirmEmail');
       })
       .catch(err => {

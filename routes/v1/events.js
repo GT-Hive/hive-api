@@ -20,7 +20,8 @@ exports.getEvents = (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      res.status(403).json({ error: 'Cannot get events' })});
+      res.status(403).json({ error: 'Cannot get events' });
+    });
 };
 
 exports.getEvent = (req, res) => {
