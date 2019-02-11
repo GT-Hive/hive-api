@@ -25,17 +25,8 @@ exports.register = (req, res) => {
   const newUser = User.build(user);
 
   newUser
-    .validate()
-    .then(() => {
-      newUser
-        .save()
-        .then(() => res.json(newUser.toAuthJSON()))
-        .catch(err => {
-          const error =
-            err && err.errors ? err.errors[0].message : 'an error occurred while registering';
-          res.status(422).json({ error });
-        });
-    })
+    .save()
+    .then(() => res.json(newUser.toAuthJSON()))
     .catch(err => {
       const error =
         err && err.errors ? err.errors[0].message : 'an error occurred while registering';
@@ -63,16 +54,20 @@ exports.confirmToken = (req, res) => {
         user.save();
         res.render('confirmEmail', { isConfirmed: true });
       } else {
-        res.render('confirmEmail', { isConfirmed: false, token });
+        res.render('confirmEmail', {
+          isConfirmed: false,
+          token: encodeURIComponent(token),
+        });
       }
     })
     .catch(err => {
-      res.render('error', { err: 'Token is invalid or email already has been confirmed' });
+      res.render('error', { error: 'Token is invalid or email already has been confirmed' });
     });
 };
 
 exports.requestConfirmEmail = (req, res) => {
   const { token } = req.params;
+  const { is_api_request } = req.body;
   let { holdUntil } = req.session;
   const today = new Date();
   const holdTimePassed = holdUntil && holdUntil <= today;
@@ -90,16 +85,21 @@ exports.requestConfirmEmail = (req, res) => {
       .then(user => {
         user.confirmed_token = user.generateConfirmToken();
         user.save();
-        res.render('resendConfirmEmail');
+        is_api_request
+          ?  res.json({ success: 'The confirmation email has been sent! Please check your email inbox.' })
+          : res.render('resendConfirmEmail');
       })
       .catch(err => {
-        res.render('error', {
-          err: 'Confirmation is already validated or token is invalid',
-        });
+        const error = 'Email is already confirmed or token is invalid';
+        is_api_request
+          ? res.status(403).json({ error })
+          : res.render('error', { error });
       });
   } else {
-    res.render('error', {
-      err: 'It looks like you already verified your email. If not, please wait for 3 minutes to request again.',
-    });
+    const error = 'It looks like you already verified your email.' +
+      'If not, please wait for few minutes to request again.';
+    is_api_request
+      ? res.status(403).json({ error })
+      : res.render('error', { error });
   }
 };

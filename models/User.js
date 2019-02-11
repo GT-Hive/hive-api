@@ -101,12 +101,19 @@ module.exports = function(sequelize, DataTypes) {
   User.prototype.toAuthJSON = function() {
     const today = new Date();
     const exp = new Date(today).setHours(today.getHours() + 12);
-    const token = jwt.generateJWT(this.id, this.email);
-    return { token, exp };
+    const id = this.id;
+    const token = jwt.generateJWT(id, this.email);
+    return {
+      token,
+      exp,
+      id,
+    };
   };
 
   User.prototype.generateConfirmToken = function() {
-    return _generateConfirmToken(this.email);
+    const token = _generateConfirmToken(this.email);
+    _sendConfirmEmail(this.email, token);
+    return token;
   };
 
   // generate email confirm token & send email before creating a user
@@ -118,12 +125,18 @@ module.exports = function(sequelize, DataTypes) {
       .catch(err => err);
   });
 
+  User.afterCreate(function(user, options) {
+    _sendConfirmEmail(user.email, user.confirmed_token);
+  });
+
   return User;
 };
 
 const _generateConfirmToken = email => {
   const buf = require('crypto').randomBytes(64);
-  const token = buf.toString('base64');
+  return buf.toString('base64');
+};
+
+const _sendConfirmEmail = (email, token) => {
   emailSender.sendConfirmEmail(email, encodeURIComponent(token));
-  return token;
 };

@@ -17,7 +17,7 @@ module.exports = (app, router) => {
   // auth
   router.post('/auth/login', jwtAuth.optional, auth.login);
   router.post('/auth/register', jwtAuth.optional, auth.register);
-  router.get('/auth/request-confirm-email/:token', jwtAuth.optional, auth.requestConfirmEmail);
+  router.post('/auth/request-confirm-email/:token', jwtAuth.optional, auth.requestConfirmEmail);
   router.get('/auth/confirm-email/:token', jwtAuth.optional, auth.confirmToken);
 
   /*

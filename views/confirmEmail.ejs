@@ -10,7 +10,10 @@
   <% if (locals.isConfirmed) { %>
     <h3>Your email address has been confirmed!</h3>
   <% } else { %>
-    <h3>This link is expired. <a href="/api/v1/auth/request-confirm-email/<%- token %>">Click here to request an email again.</a></h3>
+    <form action="/api/v1/auth/request-confirm-email/<%- token %>" method="post">
+      <h3>This link is expired. </h3>
+      <input type="submit" value="Click here to request an email again.">
+    </form>
   <% } %>
 </body>
 </html>
