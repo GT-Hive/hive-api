@@ -1,6 +1,6 @@
 'use strict';
 
-const User = require('../../models').User;
+const db = require('../../models');
 const passport = require('passport');
 
 exports.login = (req, res, next) => {
@@ -21,12 +21,31 @@ exports.login = (req, res, next) => {
 };
 
 exports.register = (req, res) => {
-  const { user } = req.body;
-  const newUser = User.build(user);
+  const {
+    user,
+    interests,
+  } = req.body;
+  const newUser = db.User.build(user);
 
   newUser
     .save()
-    .then(() => res.json(newUser.toAuthJSON()))
+    .then(() => {
+      db.Interest
+        .findAll({
+          where: {
+            id: interests,
+          },
+        })
+        .then(interests => {
+          if (!interests) return res.status(403).json({ error: 'an error occurred while registering' });
+
+          newUser
+            .addInterests(interests)
+            .then(() => res.json(newUser.toAuthJSON()))
+            .catch(err => res.status(403).json({ error: 'an error occurred while registering' }));
+        })
+        .catch(err => res.status(403).json({ error: 'an error occurred while registering' }));
+    })
     .catch(err => {
       const error =
         err && err.errors ? err.errors[0].message : 'an error occurred while registering';
@@ -37,7 +56,7 @@ exports.register = (req, res) => {
 exports.confirmToken = (req, res) => {
   const { token } = req.params;
 
-  User
+  db.User
     .findOne({
       where: {
         confirmed_token: token,
@@ -75,7 +94,7 @@ exports.requestConfirmEmail = (req, res) => {
   if (!holdUntil || holdTimePassed) {
     // allow one request email up to 3 minutes to avoid brute-force attack
     req.session.holdUntil = today.setSeconds(today.getSeconds() + 180);
-    User
+    db.User
       .findOne({
         where: {
           confirmed_token: token,
