@@ -122,3 +122,32 @@ exports.requestConfirmEmail = (req, res) => {
       : res.render('error', { error });
   }
 };
+
+exports.resetPassword = (req, res) => {
+  const { email } = req.body;
+  let { resetHoldUntil } = req.session;
+  const today = new Date();
+  const holdTimePassed = resetHoldUntil && resetHoldUntil <= today;
+
+  if (!resetHoldUntil || holdTimePassed) {
+    // allow one request email up to 3 minutes to avoid brute-force attack
+    req.session.resetHoldUntil = today.setSeconds(today.getSeconds() + 180);
+    db.User
+      .findOne({
+        where: {email},
+      })
+      .then(user => {
+        user.resetPassword()
+          .then(() => {
+            res.json({success: 'Your reset password has been sent to your email.'});
+          })
+          .catch(err => {
+            res.status(403).json({error: 'Something went wrong while resetting your password.'});
+          })
+      })
+      .catch(err => res.status(403).json({error: 'Email is not found.'}));
+  } else {
+    const error = 'Please wait for few minutes to request again.';
+    res.status(403).json({ error });
+  }
+};

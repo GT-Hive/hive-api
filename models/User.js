@@ -116,6 +116,21 @@ module.exports = function(sequelize, DataTypes) {
     return token;
   };
 
+  User.prototype.resetPassword = function() {
+    const randomPassword = _getRandomPassword(8);
+    return bcrypt
+      .hash(randomPassword, saltRounds)
+      .then(hash => {
+        this.password = hash;
+        this.save()
+          .then(() => {
+            emailSender.sendResetPasswordEmail(this.email, randomPassword);
+          })
+          .catch(err => err);
+      })
+      .catch(err => err);
+  };
+
   // generate email confirm token & send email before creating a user
   User.beforeCreate(function(user, options) {
     user.confirmed_token = _generateConfirmToken(user.email);
@@ -139,4 +154,13 @@ const _generateConfirmToken = email => {
 
 const _sendConfirmEmail = (email, token) => {
   emailSender.sendConfirmEmail(email, encodeURIComponent(token));
+};
+
+const _getRandomPassword = length => {
+  const chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*()-+<>ABCDEFGHIJKLMNOP1234567890";
+  const pass = [];
+  for (let i = 0; i < length; i++) {
+    pass[i] = chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pass.join('');
 };
