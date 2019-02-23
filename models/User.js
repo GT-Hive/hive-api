@@ -131,8 +131,30 @@ module.exports = function(sequelize, DataTypes) {
       .catch(err => err);
   };
 
+  User.prototype.changePassword = function(password) {
+    if (!_isStrongPassword(password)) {
+      return new Promise((_, reject) => {
+        reject('The password must be 8 characters or more and' +
+          ' contain at least one special character and one number.');
+      });
+    }
+    return bcrypt
+      .hash(password, saltRounds)
+      .then(hash => {
+        this.password = hash;
+        return this.save();
+      })
+      .catch(err => err);
+  };
+
   // generate email confirm token & send email before creating a user
   User.beforeCreate(function(user, options) {
+    if (!_isStrongPassword(user.password)) {
+      return new Promise((_, reject) => {
+        reject('The password must be 8 characters or more and' +
+          ' contain at least one special character and one number.');
+      });
+    }
     user.confirmed_token = _generateConfirmToken(user.email);
     return bcrypt
       .hash(user.password, saltRounds)
@@ -163,4 +185,10 @@ const _getRandomPassword = length => {
     pass[i] = chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return pass.join('');
+};
+
+const _isStrongPassword = password => {
+  const specialCharEx = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+  const numberEx = /\d/;
+  return specialCharEx.test(password) && numberEx.test(password) && password.length > 7;
 };

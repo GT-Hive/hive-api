@@ -49,3 +49,13 @@ exports.updateUser = (req, res) => {
     })
     .catch(err => res.status(403).json({ error: 'Failed to update the user' }));
 };
+
+exports.updateUserPassword = (req, res) => {
+  const { password } = req.body;
+  const { user } = res.locals;
+
+  user
+    .changePassword(password)
+    .then(() => res.json({ success: 'Successfully updated the password' }))
+    .catch(err => res.status(403).json({ error: err }));
+};

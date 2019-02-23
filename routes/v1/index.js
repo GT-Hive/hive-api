@@ -33,6 +33,7 @@ module.exports = (app, router) => {
   router.get('/users/:id', users.getUser);
   router.delete('/users/:id', userHelper.requireCurrentUser, users.removeUser);
   router.patch('/users/:id', userHelper.requireCurrentUser, users.updateUser);
+  router.patch('/users/:id/password', userHelper.requireCurrentUser, users.updateUserPassword);
 
   // user skills
   router.get('/users/:id/skills', userSkills.getUserSkills);
