@@ -44,12 +44,13 @@ exports.getEventGuests = (req, res) => {
   db.Event
     .findOne({
       where: { id },
-      include: [
-        {
-          association: 'guests',
-          attributes: userParams,
+      include: {
+        association: 'guests',
+        attributes: userParams,
+        through: {
+          attributes: [],
         },
-      ],
+      },
     })
     .then(event => {
       if (!event) return res.status(404).json({ error: 'Event is not found' });
@@ -68,12 +69,13 @@ exports.getEventHosts = (req, res) => {
   db.Event
     .findOne({
       where: { id },
-      include: [
-        {
-          association: 'hosts',
-          attributes: userParams,
+      include: {
+        association: 'hosts',
+        attributes: userParams,
+        through: {
+          attributes: [],
         },
-      ],
+      },
     })
     .then(event => {
       if (!event) return res.status(404).json({ error: 'Event is not found' });
