@@ -1,11 +1,7 @@
 'use strict';
 
 const db = require('../../models');
-const communityParams = [
-  'id',
-  'created_at',
-  'updated_at',
-];
+const communityParams = require('../../lib/communitiesHelper').attributes;
 const eventParams = require('../../lib/eventHelper').attributes;
 const userParams = require('../../lib/userHelper').attributes;
 
@@ -13,10 +9,6 @@ exports.getCommunities = (req, res) => {
   db.Community
     .findAll({
       attributes: communityParams,
-      include: {
-        association: 'interest',
-        attributes: ['name'],
-      },
     })
     .then(communities => {
       communities
@@ -33,10 +25,6 @@ exports.getCommunity = (req, res) => {
     .findOne({
       where: { id },
       attributes: communityParams,
-      include: {
-        association: 'interest',
-        attributes: ['name'],
-      },
     })
     .then(community => {
       community
@@ -53,45 +41,35 @@ exports.getCommunityUsers = (req, res) => {
     .findAll({
       attributes: userParams,
       include: {
+        where: { id },
         association: 'communities',
         attributes: communityParams,
-        where: { id },
-        include: {
-          association: 'interest',
-          attributes: ['name'],
-        },
-        through: {
-          attributes: [],
-        },
       },
     })
     .then(users => {
       users
         ? res.json({ users })
-        : res.status(404).json({ error: 'Community users are not found' });
+        : res.status(404).json({ error: 'Users of the community are not found' });
     });
 };
 
-exports.addCommunityByInterest = (req, res) => {
+exports.createCommunity = (req, res) => {
   const {
-    community: { interest_id },
+    community: {
+      name,
+      content,
+      img_url,
+    }
   } = req.body;
 
-  db.Interest
-    .findOne({
-      where: {
-        id: interest_id,
-      },
+  db.Community
+    .create({
+      name,
+      content,
+      img_url,
     })
-    .then(interest => {
-      if (!interest) return res.status(404).json({ error: 'Interest not found for community' });
-
-      db.Community
-        .create({ interest_id })
-        .then(() => res.json({ success: 'Successfully added the community' }))
-        .catch(err => res.json({ error: 'The community already exists' }));
-    })
-    .catch(err => res.status(404).json({ error: 'Interest not found for community' }));
+    .then(() => res.json({ success: 'Successfully created the community' }))
+    .catch(err => res.json({ error: 'Failed to create a community' }));
 };
 
 exports.removeCommunity = (req, res) => {
@@ -109,21 +87,35 @@ exports.removeCommunity = (req, res) => {
     .catch(err => res.json({ error: 'Failed to remove the community due to an error' }));
 };
 
-exports.removeCommunityByInterest = (req, res) => {
+exports.updateCommunity = (req, res) => {
   const { id } = req.params;
+  const {
+    community: {
+      name,
+      content,
+      img_url,
+    }
+  } = req.body;
 
   db.Community
-    .destroy({
-      where: {
-        interest_id: id,
+    .update(
+      {
+        name,
+        content,
+        img_url,
       },
+      {
+        where: { id },
+      },
+    )
+    .then(result => {
+      result[0] > 0
+        ? res.json({ success: 'Successfully updated the community' })
+        : res.status(403).json({
+          error: 'Already updated or failed to update due to an invalid community',
+        });
     })
-    .then(removedCommunity => {
-      removedCommunity
-        ? res.json({ success: 'Successfully removed the community' })
-        : res.status(404).json({ error: 'Community is not found' });
-    })
-    .catch(err => res.json({ error: 'Failed to remove the community due to an error' }));
+    .catch(err => res.status(403).json({ error: 'Failed to update the community' }));
 };
 
 exports.getCommunityEvents = (req, res) => {
@@ -134,13 +126,9 @@ exports.getCommunityEvents = (req, res) => {
       attributes: eventParams,
       include: [
         {
-          association: 'community',
           where: { id },
+          association: 'community',
           attributes: communityParams,
-          include: {
-            association: 'interest',
-            attributes: ['name'],
-          },
         },
         {
           association: 'location',

@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('../../../models');
-const interestParams = ['id', 'name'];
+const interestParams = require('../../../lib/interestHelper').attributes;
 
 exports.getUserInterests = (req, res) => {
   const { id } = req.params;
@@ -9,11 +9,11 @@ exports.getUserInterests = (req, res) => {
   db.Interest
     .findAll({
       attributes: interestParams,
-      include: [{
+      include: {
         association: 'users',
         where: { id },
         attributes: [],
-      }],
+      },
     })
     .then(interests => {
       interests
@@ -48,7 +48,12 @@ exports.removeUserInterest = (req, res) => {
   const { id, interest_id } = req.params;
 
   db.User_Interest
-    .destroy({ where: { user_id: id, interest_id } })
+    .destroy({
+      where: {
+        user_id: id,
+        interest_id,
+      },
+    })
     .then(removedInterest => {
       removedInterest
         ? res.json({ success: 'Successfully removed the interest from the user' })

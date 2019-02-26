@@ -37,18 +37,19 @@ exports.register = (req, res) => {
           },
         })
         .then(interests => {
-          if (!interests) return res.status(403).json({ error: 'an error occurred while registering' });
+          if (!interests) return res.status(403).json({ error: 'Error occurred while registering' });
 
           newUser
             .addInterests(interests)
             .then(() => res.json(newUser.toAuthJSON()))
-            .catch(err => res.status(403).json({ error: 'an error occurred while registering' }));
+            .catch(err => res.status(403).json({ error: 'Error occurred while registering' }));
         })
-        .catch(err => res.status(403).json({ error: 'an error occurred while registering' }));
+        .catch(err => res.status(403).json({ error: 'Error occurred while registering' }));
     })
     .catch(err => {
-      const error =
-        err && err.errors ? err.errors[0].message : 'an error occurred while registering';
+      const error = typeof err === 'string'
+        ?  err
+        : (err && err.errors ? err.errors[0].message : 'Error occurred while registering');
       res.status(422).json({ error });
     });
 };

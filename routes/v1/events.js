@@ -18,10 +18,7 @@ exports.getEvents = (req, res) => {
         ? res.json({ events })
         : res.status(404).json({ error: 'Events are not found' });
     })
-    .catch(err => {
-      console.log(err);
-      res.status(403).json({ error: 'Cannot get events' });
-    });
+    .catch(err => res.status(403).json({ error: 'Cannot get events' }));
 };
 
 exports.getEvent = (req, res) => {

@@ -10,14 +10,17 @@ module.exports = function(sequelize, DataTypes) {
         primaryKey: true,
         autoIncrement: true,
       },
-      interest_id: {
-        type: DataTypes.INTEGER(10).UNSIGNED,
+      name: {
+        type: DataTypes.STRING(100),
         allowNull: false,
-        unique: true,
-        references: {
-          model: 'Interest',
-          key: 'id',
-        },
+      },
+      content: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      img_url: {
+        type: DataTypes.TEXT,
+        allowNull: true,
       },
       created_at: {
         type: DataTypes.DATE,

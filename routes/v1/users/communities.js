@@ -1,11 +1,7 @@
 'use strict';
 
 const db = require('../../../models');
-const communitiesParams = [
-  'id',
-  'created_at',
-  'updated_at',
-];
+const communitiesParams = require('../../../lib/communitiesHelper').attributes;
 
 exports.getUserCommunities = (req, res) => {
   const { id } = req.params;
@@ -13,27 +9,18 @@ exports.getUserCommunities = (req, res) => {
   db.Community
     .findAll({
       attributes: communitiesParams,
-      include: [
-        {
-          association: 'interest',
-          attributes: ['name'],
-        },
-        {
-          association: 'users',
-          where: { id },
-          attributes: [],
-        },
-      ],
+      include: {
+        association: 'users',
+        where: { id },
+        attributes: [],
+      },
     })
     .then(communities => {
       communities
         ? res.json({ communities })
         : res.status(404).json({ error: 'Communities are not found' });
     })
-    .catch(err => {
-      console.log(err);
-      res.status(403).json({ error: 'Cannot get communities' });
-    });
+    .catch(err => res.status(403).json({ error: 'Cannot get communities' }));
 };
 
 exports.addUserCommunity = (req, res) => {

@@ -1,7 +1,7 @@
 'use strict';
 
 const db = require('../../models');
-const interestParams = ['id', 'name'];
+const interestParams = require('../../lib/interestHelper').attributes;
 const userParams = require('../../lib/userHelper').attributes;
 
 exports.getInterests = (req, res) => {
@@ -9,7 +9,12 @@ exports.getInterests = (req, res) => {
     .findAll({
       attributes: interestParams,
     })
-    .then(interests => res.json({ interests }));
+    .then(interests => {
+      interests
+        ? res.json({ interests })
+        : res.status(404).json({ error: 'Interests are not found' });
+    })
+    .catch(err => res.status(403).json({ error: 'Cannot get interests' }));
 };
 
 exports.getInterest = (req, res) => {
@@ -20,7 +25,12 @@ exports.getInterest = (req, res) => {
       where: { id },
       attributes: interestParams,
     })
-    .then(interest => res.json({ interest }));
+    .then(interest => {
+      interest
+        ? res.json({ interest })
+        : res.status(404).json({ error: 'Interest is not found' });
+    })
+    .catch(err => res.status(403).json({ error: 'Cannot get interest' }));
 };
 
 exports.getInterestUsers = (req, res) => {
@@ -36,21 +46,25 @@ exports.getInterestUsers = (req, res) => {
       },
     })
     .then(users => {
-      users.length > 0
+      users
         ? res.json({ users })
         : res.status(404).json({ error: 'Users of the interest are not found' });
     });
 };
 
 exports.createInterest = (req, res) => {
-  const { interest } = req.body;
+  const {
+    interest: {
+      name,
+    },
+  } = req.body;
 
   db.Interest
     .create({
-      name: interest.name,
+      name,
     })
     .then(() => res.json({ success: 'Successfully created the interest' }))
-    .catch(err => res.json({ error: 'Failed to create the interest due to an error' }));
+    .catch(err => res.json({ error: 'Failed to create an interest' }));
 };
 
 exports.removeInterest = (req, res) => {
@@ -70,12 +84,16 @@ exports.removeInterest = (req, res) => {
 
 exports.updateInterest = (req, res) => {
   const { id } = req.params;
-  const { interest } = req.body;
+  const {
+    interest: {
+      name,
+    }
+  } = req.body;
 
   db.Interest
     .update(
       {
-        name: interest.name,
+        name,
       },
       {
         where: { id },
@@ -85,7 +103,7 @@ exports.updateInterest = (req, res) => {
       result[0] > 0
         ? res.json({ success: 'Successfully updated the interest' })
         : res.status(403).json({
-          error: 'Already updated or failed to update due to invalid interest',
+          error: 'Already updated or failed to update due to an invalid interest',
         });
     })
     .catch(err => res.status(403).json({ error: 'Failed to update the interest' }));

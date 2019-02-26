@@ -86,10 +86,10 @@ module.exports = (app, router) => {
   router.get('/communities', communities.getCommunities);
   router.get('/communities/:id', communities.getCommunity);
   router.get('/communities/:id/users', communities.getCommunityUsers);
-  router.post('/communities', communities.addCommunityByInterest);
-  router.delete('/communities/:id', communities.removeCommunity);
-  router.delete('/communities/interests/:id', communities.removeCommunityByInterest);
   router.get('/communities/:id/events', communities.getCommunityEvents);
+  router.post('/communities', communities.createCommunity);
+  router.delete('/communities/:id', communities.removeCommunity);
+  router.patch('/communities/:id', communities.updateCommunity);
 
   app.use('/api/v1', router);
 };

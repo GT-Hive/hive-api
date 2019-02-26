@@ -65,12 +65,6 @@ db['Community'].belongsToMany(db['User'], {
   foreignKey: 'community_id',
 });
 
-// define has-one rel between Community & Interest
-db['Community'].belongsTo(db['Interest'], {
-  as: 'interest',
-  foreignKey: 'interest_id',
-});
-
 // define has-one rel between Event & Location
 db['Event'].belongsTo(db['Location'], {
   as: 'location',
