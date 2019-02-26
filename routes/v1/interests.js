@@ -43,6 +43,9 @@ exports.getInterestUsers = (req, res) => {
         association: 'interests',
         attributes: interestParams,
         where: { id },
+        through: {
+          attributes: [],
+        },
       },
     })
     .then(users => {

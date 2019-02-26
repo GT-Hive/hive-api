@@ -44,6 +44,9 @@ exports.getCommunityUsers = (req, res) => {
         where: { id },
         association: 'communities',
         attributes: communityParams,
+        through: {
+          attributes: [],
+        },
       },
     })
     .then(users => {
