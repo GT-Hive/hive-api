@@ -22,25 +22,39 @@ exports.login = (req, res, next) => {
 
 exports.register = (req, res) => {
   const {
-    user,
-    interests,
+    user: {
+      email,
+      password,
+      first_name,
+      last_name,
+      intro,
+      profile_img,
+    },
+    communities,
   } = req.body;
-  const newUser = db.User.build(user);
+  const newUser = db.User.build({
+    email,
+    password,
+    first_name,
+    last_name,
+    intro,
+    profile_img,
+  });
 
   newUser
     .save()
     .then(() => {
-      db.Interest
+      db.Community
         .findAll({
           where: {
-            id: interests,
+            id: communities,
           },
         })
-        .then(interests => {
-          if (!interests) return res.status(403).json({ error: 'Error occurred while registering' });
+        .then(communities => {
+          if (!communities) return res.status(403).json({ error: 'Error occurred while registering' });
 
           newUser
-            .addInterests(interests)
+            .addCommunities(communities)
             .then(() => res.json(newUser.toAuthJSON()))
             .catch(err => res.status(403).json({ error: 'Error occurred while registering' }));
         })
