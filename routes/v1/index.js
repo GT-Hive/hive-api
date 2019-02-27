@@ -21,6 +21,9 @@ module.exports = (app, router) => {
   router.get('/auth/confirm-email/:token', jwtAuth.optional, auth.confirmToken);
   router.patch('/auth/reset-password', jwtAuth.optional, auth.resetPassword);
 
+  // communities
+  router.get('/communities', jwtAuth.optional, communities.getCommunities);
+
   /*
   *************************************************************
   * Require JWT authentication by default for below endpoints *
@@ -83,7 +86,6 @@ module.exports = (app, router) => {
   router.get('/skills/:id/users', skills.getSkillUsers);
 
   // communities
-  router.get('/communities', communities.getCommunities);
   router.get('/communities/:id', communities.getCommunity);
   router.get('/communities/:id/users', communities.getCommunityUsers);
   router.get('/communities/:id/events', communities.getCommunityEvents);
