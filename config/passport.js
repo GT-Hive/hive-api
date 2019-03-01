@@ -15,6 +15,7 @@ passport.use(
       User.findOne({ where: { email } })
         .then(user => {
           if (!user) return done(null, errorMsg);
+          if (!user.email_confirmed) return done(null, 'Email is not verified yet.');
 
           user
             .validatePassword(password)
